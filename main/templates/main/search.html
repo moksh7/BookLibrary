@@ -1,0 +1,62 @@
+{% extends 'main/base.html'%}
+
+{% block content%}
+    <div class="mb-3">
+        <label for="searchbox" class="form-label">Search Books</label>
+        <input type="text" placeholder="Search by book title, author, category" class="form-control" id="searchbox">
+    </div>
+    <button class="btn btn-primary" id="search">Submit</button>
+   <div id="table">
+
+    </div>
+    <script
+    src="https://code.jquery.com/jquery-3.7.0.min.js"
+    integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+    crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $("#search").on('click', function(event){
+            console.log('clicked');
+            let url = '/search';
+            if($('#searchbox').val().trim()){
+                let data = {'key':$('#searchbox').val().trim()};
+                $.get(url, data).done(function(response) {
+                    if(response.length){
+                        tr = '';
+                        $.each(response,function(_,book){
+                            tr += `<tr>
+                                    <td>${book.title}</td>
+                                    <td>${book.author}</td>
+                                    <td>${book.desc}</td>
+                                    <td>${book.category}</td>
+                                    <td>${book.price}</td>
+                                    <td>${book.rating}</td>
+                                    <td>${book.availability}</td>
+                                </tr>`;
+                        })
+                        tbl_html = `<table class="table table-dark table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Title</th>
+                                            <th scope="col">Author</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Rating</th>
+                                            <th scope="col">Availability</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="tableBody">${tr}
+                                        </tbody>
+                                        </table>
+                        `
+                        $('#table').html(tbl_html)
+                    }
+                    else{
+                        $('#table').html('No Book Found search another keyword')
+                    }
+                })
+            }
+        });
+
+    </script>
+{% endblock%}
